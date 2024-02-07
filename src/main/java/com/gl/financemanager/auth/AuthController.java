@@ -1,13 +1,15 @@
 package com.gl.financemanager.auth;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -17,13 +19,21 @@ import java.util.stream.Collectors;
 public class AuthController {
 
     private final JwtEncoder encoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(JwtEncoder encoder) {
+    @Autowired
+    public AuthController(JwtEncoder encoder,
+                          UserRepository userRepository,
+                          PasswordEncoder passwordEncoder) {
         this.encoder = encoder;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
-    public String auth(Authentication authentication) {
+    @ResponseBody
+    public ResponseEntity<LoginResponse> auth(Authentication authentication) {
         Instant now = Instant.now();
         long expiry = 36000L;
         String scope = authentication.getAuthorities().stream()
@@ -36,7 +46,20 @@ public class AuthController {
                 .subject(authentication.getName())
                 .claim("scope", scope)
                 .build();
-        return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        String accessToken = this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+        var loginResponse = new LoginResponse(authentication.getName(), accessToken);
+        return new ResponseEntity<>(loginResponse, HttpStatusCode.valueOf(200));
+    }
+
+    @PostMapping("/register")
+    @ResponseBody
+    public ResponseEntity<Void> register(@RequestBody RegisterRequest registerRequest) {
+        var userToSave = FmUser.builder()
+                .username(registerRequest.getUsername())
+                .password(this.passwordEncoder.encode(registerRequest.getPassword()))
+                .build();
+        this.userRepository.saveAndFlush(userToSave);
+        return new ResponseEntity<>(HttpStatusCode.valueOf(200));
     }
 
 }
