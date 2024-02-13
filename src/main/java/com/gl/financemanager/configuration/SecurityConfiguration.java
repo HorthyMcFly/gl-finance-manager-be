@@ -9,11 +9,9 @@ import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,21 +42,11 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Order(0)
-    public SecurityFilterChain publicFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .securityMatcher("api/auth/register")
-                .authorizeHttpRequests((authorize) -> authorize
-                        .anyRequest().permitAll());
-        return http.build();
-    }
-
-    @Bean
-    @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/api/auth/**"))
+                .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/api/auth/register").permitAll())
                 .authorizeHttpRequests((authorize) -> authorize
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
