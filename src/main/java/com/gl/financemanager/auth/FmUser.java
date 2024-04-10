@@ -29,5 +29,7 @@ public class FmUser {
     private String username;
     @NonNull
     private String password;
+    private boolean admin;
+    private boolean active;
 
 }

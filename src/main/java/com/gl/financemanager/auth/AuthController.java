@@ -39,6 +39,10 @@ public class AuthController {
         String scope = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
+        // user always has exactly one role
+        var userRole = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).toList()
+                .get(0);
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
@@ -47,7 +51,7 @@ public class AuthController {
                 .claim("scope", scope)
                 .build();
         String accessToken = this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-        var loginResponse = new LoginResponse(authentication.getName(), accessToken);
+        var loginResponse = new LoginResponse(authentication.getName(), userRole, accessToken);
         return new ResponseEntity<>(loginResponse, HttpStatusCode.valueOf(200));
     }
 

@@ -14,30 +14,28 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-    };
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         Optional<FmUser> userByUsername = userRepository.findByUsername(username);
-        if (!userByUsername.isPresent()) {
+        if (userByUsername.isEmpty()) {
             throw new UsernameNotFoundException("Invalid credentials!");
         }
         FmUser user = userByUsername.get();
-        if (user == null || !user.getUsername().equals(username)) {
-            throw new UsernameNotFoundException("Invalid credentials!");
-        }
+        var role = user.isAdmin() ? Roles.ADMIN : Roles.USER;
 
         return User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())
-                .roles(Roles.USER)
-                .disabled(false)
+                .roles(role)
+                .disabled(!user.isActive())
                 .build();
     }
 
