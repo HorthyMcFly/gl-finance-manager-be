@@ -6,10 +6,7 @@ import jakarta.annotation.security.RolesAllowed;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +26,21 @@ public class AdminController {
     ).toList();
     return new ResponseEntity<>(usersWithoutPassword,
         HttpStatusCode.valueOf(200));
+  }
+
+  @PostMapping("/user")
+  @ResponseBody
+  public ResponseEntity<FmUser> createUser(@RequestBody FmUser user) {
+    var createdUser = this.adminService.createUser(user);
+    createdUser.setPassword("");
+    return new ResponseEntity<>(createdUser, HttpStatusCode.valueOf(201));
+  }
+
+  @PutMapping("/user")
+  @ResponseBody
+  public ResponseEntity<FmUser> modifyUser(@RequestBody FmUser user) {
+    var modifiedUser = this.adminService.modifyUser(user);
+    modifiedUser.setPassword("");
+    return new ResponseEntity<>(modifiedUser, HttpStatusCode.valueOf(200));
   }
 }
