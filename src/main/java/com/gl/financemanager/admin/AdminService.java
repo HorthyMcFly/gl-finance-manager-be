@@ -22,13 +22,16 @@ public class AdminService {
 
     public FmUser createUser(FmUser newUser) {
         newUser.setPassword(passwordEncoder.encode(newUser.getUsername()));
-      return userRespository.saveAndFlush(newUser);
+        return userRespository.saveAndFlush(newUser);
     }
 
     public FmUser modifyUser(FmUser modifiedUser) {
         if (modifiedUser.getPassword().equals("reset")) {
             modifiedUser.setPassword(passwordEncoder.encode(modifiedUser.getUsername()));
+        } else {
+          var existingUser = this.userRespository.findById(modifiedUser.getId());
+          existingUser.ifPresent(fmUser -> modifiedUser.setPassword(fmUser.getPassword()));
         }
-      return userRespository.saveAndFlush(modifiedUser);
+        return userRespository.saveAndFlush(modifiedUser);
     }
 }

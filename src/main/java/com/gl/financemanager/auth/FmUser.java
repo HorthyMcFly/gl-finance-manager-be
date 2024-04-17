@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,11 +26,15 @@ public class FmUser {
     private Integer id;
 
     @NonNull
+    @Size(min = 5, max = 20)
     @Column(unique = true)
     private String username;
+
     @NonNull
     private String password;
+
     private boolean admin;
+
     private boolean active;
 
 }

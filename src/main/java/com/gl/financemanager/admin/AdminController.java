@@ -3,6 +3,7 @@ package com.gl.financemanager.admin;
 import com.gl.financemanager.auth.FmUser;
 import com.gl.financemanager.auth.Roles;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class AdminController {
 
   @PostMapping("/user")
   @ResponseBody
-  public ResponseEntity<FmUser> createUser(@RequestBody FmUser user) {
+  public ResponseEntity<FmUser> createUser(@Valid @RequestBody FmUser user) {
     var createdUser = this.adminService.createUser(user);
     createdUser.setPassword("");
     return new ResponseEntity<>(createdUser, HttpStatusCode.valueOf(201));
@@ -38,7 +39,7 @@ public class AdminController {
 
   @PutMapping("/user")
   @ResponseBody
-  public ResponseEntity<FmUser> modifyUser(@RequestBody FmUser user) {
+  public ResponseEntity<FmUser> modifyUser(@Valid @RequestBody FmUser user) {
     var modifiedUser = this.adminService.modifyUser(user);
     modifiedUser.setPassword("");
     return new ResponseEntity<>(modifiedUser, HttpStatusCode.valueOf(200));
