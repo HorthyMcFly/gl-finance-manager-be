@@ -18,7 +18,7 @@ import lombok.NonNull;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "USER")
+@Table(name = "FM_USER")
 public class FmUser {
 
     @Id
