@@ -1,4 +1,4 @@
-package com.gl.financemanager.period;
+package com.gl.financemanager.balance;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
@@ -8,19 +8,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("api/period")
+@RequestMapping("api/balance")
 @AllArgsConstructor
-public class PeriodController {
+public class BalanceController {
 
-  private final PeriodService periodService;
+  private final BalanceService balanceService;
 
-  @GetMapping("/periods")
+  @GetMapping
   @ResponseBody
-  ResponseEntity<List<FmPeriod>> getPeriods() {
-    return new ResponseEntity<>(periodService.getPeriods(),
+  ResponseEntity<BalanceDto> getBalance() {
+    return new ResponseEntity<>(this.balanceService.getBalanceForLoggedInUser(),
         HttpStatusCode.valueOf(200));
   }
 }

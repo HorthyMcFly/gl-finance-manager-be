@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "PERIOD")
-public class Period {
+@Table(name = "FM_PERIOD")
+public class FmPeriod {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

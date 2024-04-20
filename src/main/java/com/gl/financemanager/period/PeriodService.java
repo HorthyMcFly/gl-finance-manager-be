@@ -11,7 +11,7 @@ public class PeriodService {
 
   private final PeriodRepository periodRepository;
 
-  List<Period> getPeriods() {
+  List<FmPeriod> getPeriods() {
     return this.periodRepository.findAll();
   }
 }
