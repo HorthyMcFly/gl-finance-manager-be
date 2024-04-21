@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/period")
+@RequestMapping("api/periods")
 @AllArgsConstructor
 public class PeriodController {
 
   private final PeriodService periodService;
 
-  @GetMapping("/periods")
+  @GetMapping
   @ResponseBody
   ResponseEntity<List<FmPeriod>> getPeriods() {
     return new ResponseEntity<>(periodService.getPeriods(),
