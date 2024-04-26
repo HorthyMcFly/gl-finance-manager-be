@@ -1,4 +1,4 @@
-package com.gl.financemanager.income;
+package com.gl.financemanager.loan;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,15 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @Builder
-public class IncomeDto {
+public class LoanDto {
 
   private Integer id;
 
   private BigDecimal amount;
 
-  private String source;
+  private String name;
 
-  private String comment;
+  private BigDecimal interestRate;
+
+  private BigDecimal monthlyRepayment;
 }
