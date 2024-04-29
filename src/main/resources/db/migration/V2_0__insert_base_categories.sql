@@ -15,3 +15,12 @@ VALUES(5, 'Tartós cikk');
 
 INSERT INTO EXPENSE_CATEGORY (ID, CATEGORY)
 VALUES(6, 'Befektetés');
+
+INSERT INTO ASSET_TYPE (ID, TYPE)
+VALUES(1, 'Forint (szabad pénz)');
+
+INSERT INTO ASSET_TYPE (ID, TYPE)
+VALUES(2, 'Kötvény');
+
+INSERT INTO ASSET_TYPE (ID, TYPE)
+VALUES(3, 'Lekötött betét');
