@@ -11,7 +11,11 @@ public class PeriodService {
 
   private final PeriodRepository periodRepository;
 
-  List<FmPeriod> getPeriods() {
-    return this.periodRepository.findAll();
+  public List<FmPeriod> getPeriods() {
+    return periodRepository.findAll();
+  }
+
+  public FmPeriod getActivePeriod() {
+    return periodRepository.findByActive(true);
   }
 }

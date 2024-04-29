@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PeriodRepository extends JpaRepository<FmPeriod, Integer> {
+
+  FmPeriod findByActive(boolean active);
 }
