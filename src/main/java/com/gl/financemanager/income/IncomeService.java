@@ -31,6 +31,9 @@ public class IncomeService {
     newIncome.setFmPeriod(activePeriod);
     var loggedInUser = this.userRepository
         .findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+    if (loggedInUser.isEmpty()) {
+      throw new RuntimeException();
+    }
     newIncome.setFmUser(loggedInUser.get());
 
     var createdIncome = incomeRepository.saveAndFlush(newIncome);
