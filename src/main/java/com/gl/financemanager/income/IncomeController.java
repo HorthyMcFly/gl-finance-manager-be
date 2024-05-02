@@ -20,4 +20,11 @@ public class IncomeController {
     return new ResponseEntity<>(this.incomeService.getIncomesForLoggedInUserByPeriodId(periodId),
         HttpStatusCode.valueOf(200));
   }
+
+  @PostMapping
+  @ResponseBody
+  public ResponseEntity<IncomeDto> createIncome(@RequestBody IncomeDto incomeDto) {
+    return new ResponseEntity<>(incomeService.createIncome(incomeDto),
+        HttpStatusCode.valueOf(201));
+  }
 }
