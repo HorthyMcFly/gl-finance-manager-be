@@ -1,5 +1,6 @@
 package com.gl.financemanager.income;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,15 @@ public class IncomeController {
 
   @PostMapping
   @ResponseBody
-  public ResponseEntity<IncomeDto> createIncome(@RequestBody IncomeDto incomeDto) {
+  public ResponseEntity<IncomeDto> createIncome(@RequestBody @Valid IncomeDto incomeDto) {
     return new ResponseEntity<>(incomeService.createIncome(incomeDto),
         HttpStatusCode.valueOf(201));
+  }
+
+  @PutMapping
+  @ResponseBody
+  public ResponseEntity<IncomeDto> modifyIncome(@RequestBody @Valid IncomeDto incomeDto) {
+    return new ResponseEntity<>(incomeService.modifyIncome(incomeDto),
+        HttpStatusCode.valueOf(200));
   }
 }

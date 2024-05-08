@@ -40,6 +40,30 @@ public class IncomeService {
     return IncomeService.toDto(createdIncome);
   }
 
+  public IncomeDto modifyIncome(IncomeDto incomeDto) {
+    if (incomeDto.getId() == null) {
+      throw new RuntimeException();
+    }
+    var loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+    var existingIncomeOpt = incomeRepository.findById(incomeDto.getId());
+    if (existingIncomeOpt.isEmpty()) {
+      throw new RuntimeException();
+    }
+    var existingIncome = existingIncomeOpt.get();
+    if (!existingIncome.getFmPeriod().isActive() ||
+        !existingIncome.getFmUser().getUsername().equals(loggedInUsername)) {
+      throw new RuntimeException();
+    }
+
+    existingIncome.setAmount(incomeDto.getAmount());
+    existingIncome.setSource(incomeDto.getSource());
+    existingIncome.setComment(incomeDto.getComment());
+
+    var modifiedIncome = incomeRepository.saveAndFlush(existingIncome);
+
+    return IncomeService.toDto(modifiedIncome);
+  }
+
   static IncomeDto toDto(Income income) {
     return IncomeDto.builder()
         .id(income.getId())
