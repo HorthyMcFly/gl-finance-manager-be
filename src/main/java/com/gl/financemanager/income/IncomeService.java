@@ -41,11 +41,28 @@ public class IncomeService {
   }
 
   public IncomeDto modifyIncome(IncomeDto incomeDto) {
-    if (incomeDto.getId() == null) {
+    var existingIncome = this.findExistingIncomeIfValidId(incomeDto.getId());
+
+    existingIncome.setAmount(incomeDto.getAmount());
+    existingIncome.setSource(incomeDto.getSource());
+    existingIncome.setComment(incomeDto.getComment());
+
+    var modifiedIncome = incomeRepository.saveAndFlush(existingIncome);
+
+    return IncomeService.toDto(modifiedIncome);
+  }
+
+  public void deleteIncome(Integer id) {
+    var existingIncome = this.findExistingIncomeIfValidId(id);
+    incomeRepository.delete(existingIncome);
+  }
+
+  private Income findExistingIncomeIfValidId(Integer id) {
+    if (id == null) {
       throw new RuntimeException();
     }
     var loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-    var existingIncomeOpt = incomeRepository.findById(incomeDto.getId());
+    var existingIncomeOpt = incomeRepository.findById(id);
     if (existingIncomeOpt.isEmpty()) {
       throw new RuntimeException();
     }
@@ -55,13 +72,7 @@ public class IncomeService {
       throw new RuntimeException();
     }
 
-    existingIncome.setAmount(incomeDto.getAmount());
-    existingIncome.setSource(incomeDto.getSource());
-    existingIncome.setComment(incomeDto.getComment());
-
-    var modifiedIncome = incomeRepository.saveAndFlush(existingIncome);
-
-    return IncomeService.toDto(modifiedIncome);
+    return existingIncome;
   }
 
   static IncomeDto toDto(Income income) {

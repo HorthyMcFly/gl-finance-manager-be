@@ -35,4 +35,11 @@ public class IncomeController {
     return new ResponseEntity<>(incomeService.modifyIncome(incomeDto),
         HttpStatusCode.valueOf(200));
   }
+
+  @DeleteMapping("/{id}")
+  @ResponseBody
+  public ResponseEntity<Void> deleteIncome(@PathVariable Integer id) {
+    this.incomeService.deleteIncome(id);
+    return new ResponseEntity<>(null, HttpStatusCode.valueOf(204));
+  }
 }
