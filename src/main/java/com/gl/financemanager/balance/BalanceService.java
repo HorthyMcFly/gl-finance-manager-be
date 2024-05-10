@@ -1,19 +1,43 @@
 package com.gl.financemanager.balance;
 
+import com.gl.financemanager.auth.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @AllArgsConstructor
 public class BalanceService {
 
   private final BalanceRepository balanceRepository;
+  private final UserRepository userRepository;
 
   public BalanceDto getBalanceForLoggedInUser() {
     var loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
     var balance = this.balanceRepository.findBalanceByFmUserUsername(loggedInUsername);
     return balance.map(BalanceService::toDto).orElse(null);
+  }
+
+  public void updateBalanceForLoggedInUser(BigDecimal balanceChange) {
+    var loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+    var balanceOpt = this.balanceRepository.findBalanceByFmUserUsername(loggedInUsername);
+    Balance balanceEntity;
+    if (balanceOpt.isEmpty()) {
+      var loggedInUser = userRepository.findByUsername(loggedInUsername);
+      assert loggedInUser.isPresent();
+      balanceEntity = Balance.builder()
+          .balance(balanceChange)
+          .investmentBalance(new BigDecimal(0))
+          .fmUser(loggedInUser.get())
+          .build();
+    } else {
+      balanceEntity = balanceOpt.get();
+      var newBalanceValue = balanceEntity.getBalance().add(balanceChange);
+      balanceEntity.setBalance(newBalanceValue);
+    }
+    balanceRepository.saveAndFlush(balanceEntity);
   }
 
   static BalanceDto toDto(Balance balance) {

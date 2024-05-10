@@ -1,7 +1,9 @@
 package com.gl.financemanager.income;
 
 import com.gl.financemanager.auth.UserRepository;
+import com.gl.financemanager.balance.BalanceService;
 import com.gl.financemanager.period.PeriodRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class IncomeService {
+
+  private final BalanceService balanceService;
 
   private final IncomeRepository incomeRepository;
   private final PeriodRepository periodRepository;
@@ -22,6 +26,7 @@ public class IncomeService {
         .stream().map(IncomeService::toDto).toList();
   }
 
+  @Transactional
   public IncomeDto createIncome(IncomeDto incomeDto) {
     if (incomeDto.getId() != null) {
       throw new RuntimeException();
@@ -37,23 +42,29 @@ public class IncomeService {
     newIncome.setFmUser(loggedInUser.get());
 
     var createdIncome = incomeRepository.saveAndFlush(newIncome);
+    balanceService.updateBalanceForLoggedInUser(incomeDto.getAmount());
     return IncomeService.toDto(createdIncome);
   }
 
+  @Transactional
   public IncomeDto modifyIncome(IncomeDto incomeDto) {
     var existingIncome = this.findExistingIncomeIfValidId(incomeDto.getId());
+    var amountDifference = incomeDto.getAmount().subtract(existingIncome.getAmount());
 
     existingIncome.setAmount(incomeDto.getAmount());
     existingIncome.setSource(incomeDto.getSource());
     existingIncome.setComment(incomeDto.getComment());
 
     var modifiedIncome = incomeRepository.saveAndFlush(existingIncome);
+    balanceService.updateBalanceForLoggedInUser(amountDifference);
 
     return IncomeService.toDto(modifiedIncome);
   }
 
+  @Transactional
   public void deleteIncome(Integer id) {
     var existingIncome = this.findExistingIncomeIfValidId(id);
+    balanceService.updateBalanceForLoggedInUser(existingIncome.getAmount().negate());
     incomeRepository.delete(existingIncome);
   }
 
