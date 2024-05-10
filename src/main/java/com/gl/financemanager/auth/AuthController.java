@@ -61,6 +61,7 @@ public class AuthController {
         var userToSave = FmUser.builder()
                 .username(registerRequest.getUsername())
                 .password(this.passwordEncoder.encode(registerRequest.getPassword()))
+                .active(true)
                 .build();
         this.userRepository.saveAndFlush(userToSave);
         return new ResponseEntity<>(HttpStatusCode.valueOf(200));
