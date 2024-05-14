@@ -1,5 +1,6 @@
 package com.gl.financemanager.expense;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,8 @@ public class ExpenseController {
   @GetMapping("/own/periods/{periodId}")
   @ResponseBody
   public ResponseEntity<List<ExpenseDto>> getIncomesByPeriodId(@PathVariable Integer periodId) {
-    return new ResponseEntity<>(this.expenseService.getExpensesForLoggedInUserByPeriodId(periodId),
+    return new ResponseEntity<>(
+        this.expenseService.getExpensesForLoggedInUserByPeriodId(periodId),
         HttpStatusCode.valueOf(200));
   }
 
@@ -25,6 +27,27 @@ public class ExpenseController {
   @ResponseBody
   public List<ExpenseCategory> getExpenseCategories() {
     return this.expenseService.getExpenseCategories();
+  }
+
+  @PostMapping
+  @ResponseBody
+  public ResponseEntity<ExpenseDto> createIncome(@RequestBody @Valid ExpenseDto expenseDto) {
+    return new ResponseEntity<>(expenseService.createExpense(expenseDto),
+        HttpStatusCode.valueOf(201));
+  }
+
+  @PutMapping
+  @ResponseBody
+  public ResponseEntity<ExpenseDto> modifyIncome(@RequestBody @Valid ExpenseDto expenseDto) {
+    return new ResponseEntity<>(expenseService.modifyExpense(expenseDto),
+        HttpStatusCode.valueOf(200));
+  }
+
+  @DeleteMapping("/{id}")
+  @ResponseBody
+  public ResponseEntity<Void> deleteIncome(@PathVariable Integer id) {
+    this.expenseService.deleteExpense(id);
+    return new ResponseEntity<>(null, HttpStatusCode.valueOf(204));
   }
 
 }
