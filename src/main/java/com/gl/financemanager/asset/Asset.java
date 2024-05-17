@@ -23,24 +23,26 @@ public class Asset {
   private Integer id;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "FM_USER")
+  @JoinColumn(name = "FM_USER", nullable = false)
   private FmUser fmUser;
 
+  @Column(nullable = false)
   private BigDecimal amount;
 
+  @Column(nullable = false)
   private String name;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @JoinColumn(name = "ASSET_TYPE")
+  @JoinColumn(name = "ASSET_TYPE", nullable = false)
   private AssetType assetType;
 
-  @Column(name = "MATURITY_DATE")
+  @Column(name = "MATURITY_DATE", nullable = false)
   private LocalDate maturityDate;
 
-  @Column(name = "INTEREST_RATE")
+  @Column(name = "INTEREST_RATE", nullable = false)
   private BigDecimal interestRate;
 
-  @Column(name = "INTEREST_PAYMENT_DATE")
-  private LocalDate interestPaymentDate;
+  @Column(name = "INTEREST_PAYMENT_MONTH")
+  private Integer interestPaymentMonth;
 
 }

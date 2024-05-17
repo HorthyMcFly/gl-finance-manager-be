@@ -37,7 +37,28 @@ public class BalanceService {
       var newBalanceValue = balanceEntity.getBalance().add(balanceChange);
       balanceEntity.setBalance(newBalanceValue);
     }
-    balanceRepository.saveAndFlush(balanceEntity);
+    balanceRepository.save(balanceEntity);
+  }
+
+  public void updateInvestmentBalanceForLoggedInUser(BigDecimal investmentBalanceChange) {
+    var loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+    var balanceOpt = this.balanceRepository.findBalanceByFmUserUsername(loggedInUsername);
+    Balance balanceEntity;
+    if (balanceOpt.isEmpty()) {
+      var loggedInUser = userRepository.findByUsername(loggedInUsername);
+      assert loggedInUser.isPresent();
+      balanceEntity = Balance.builder()
+          .balance(new BigDecimal(0))
+          .investmentBalance(investmentBalanceChange)
+          .fmUser(loggedInUser.get())
+          .build();
+    } else {
+      balanceEntity = balanceOpt.get();
+      var newInvestmentBalanceValue =
+          balanceEntity.getInvestmentBalance().add(investmentBalanceChange);
+      balanceEntity.setInvestmentBalance(newInvestmentBalanceValue);
+    }
+    balanceRepository.save(balanceEntity);
   }
 
   static BalanceDto toDto(Balance balance) {
