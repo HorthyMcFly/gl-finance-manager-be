@@ -2,7 +2,6 @@ package com.gl.financemanager.asset;
 
 import com.gl.financemanager.auth.UserRepository;
 import com.gl.financemanager.balance.BalanceService;
-import com.gl.financemanager.income.Income;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
