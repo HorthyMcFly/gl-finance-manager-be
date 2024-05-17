@@ -35,4 +35,11 @@ public class AssetController {
     return new ResponseEntity<>(assetService.createAsset(assetDto),
         HttpStatusCode.valueOf(201));
   }
+
+  @PutMapping("/sell")
+  @ResponseBody
+  public ResponseEntity<AssetDto> sellAsset(@RequestBody @Valid AssetDto assetDto) {
+    return new ResponseEntity<>(assetService.decreaseAssetAmount(assetDto),
+        HttpStatusCode.valueOf(200));
+  }
 }

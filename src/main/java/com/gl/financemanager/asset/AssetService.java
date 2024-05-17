@@ -2,6 +2,7 @@ package com.gl.financemanager.asset;
 
 import com.gl.financemanager.auth.UserRepository;
 import com.gl.financemanager.balance.BalanceService;
+import com.gl.financemanager.income.Income;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,6 +47,37 @@ public class AssetService {
       balanceService.updateInvestmentBalanceForLoggedInUser(assetDto.getAmount().negate());
     }
     return AssetService.toDto(createdAsset);
+  }
+
+  @Transactional
+  public AssetDto decreaseAssetAmount(AssetDto assetDto) {
+    var existingAsset = this.findExistingAssetIfValidId(assetDto.getId());
+    // can't increase amount with this method
+    if (assetDto.getAmount().compareTo(existingAsset.getAmount()) >= 0 ) {
+      throw new RuntimeException();
+    }
+    var amountDifference = existingAsset.getAmount().subtract(assetDto.getAmount());
+    existingAsset.setAmount(assetDto.getAmount());
+    var modifiedAsset = assetRepository.save(existingAsset);
+    balanceService.updateInvestmentBalanceForLoggedInUser(amountDifference);
+    return AssetService.toDto(modifiedAsset);
+  }
+
+  private Asset findExistingAssetIfValidId(Integer id) {
+    if (id == null) {
+      throw new RuntimeException();
+    }
+    var loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+    var existingAssetOpt = assetRepository.findById(id);
+    if (existingAssetOpt.isEmpty()) {
+      throw new RuntimeException();
+    }
+    var existingAsset = existingAssetOpt.get();
+    if (!existingAsset.getFmUser().getUsername().equals(loggedInUsername)) {
+      throw new RuntimeException();
+    }
+
+    return existingAsset;
   }
 
   static AssetDto toDto(Asset asset) {
