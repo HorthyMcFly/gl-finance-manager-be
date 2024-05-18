@@ -52,31 +52,31 @@ public class ExpenseService {
 
   @Transactional
   public ExpenseDto modifyExpense(ExpenseDto expenseDto) {
-    var existingIncome = this.findExistingExpenseIfValidId(expenseDto.getId());
-    if (existingIncome.getLoan() != null) {
+    var existingExpense = this.findExistingExpenseIfValidId(expenseDto.getId());
+    if (existingExpense.getLoan() != null) {
       throw new RuntimeException();
     }
-    var amountDifference = expenseDto.getAmount().subtract(existingIncome.getAmount());
+    var amountDifference = expenseDto.getAmount().subtract(existingExpense.getAmount());
 
-    existingIncome.setAmount(expenseDto.getAmount());
-    existingIncome.setRecipient(expenseDto.getRecipient());
-    existingIncome.setExpenseCategory(expenseDto.getExpenseCategory());
-    existingIncome.setComment(expenseDto.getComment());
+    existingExpense.setAmount(expenseDto.getAmount());
+    existingExpense.setRecipient(expenseDto.getRecipient());
+    existingExpense.setExpenseCategory(expenseDto.getExpenseCategory());
+    existingExpense.setComment(expenseDto.getComment());
 
-    var modifiedIncome = expenseRepository.save(existingIncome);
+    var modifiedExpense = expenseRepository.save(existingExpense);
     balanceService.updateBalanceForLoggedInUser(amountDifference.negate());
 
-    return ExpenseService.toDto(modifiedIncome);
+    return ExpenseService.toDto(modifiedExpense);
   }
 
   @Transactional
   public void deleteExpense(Integer id) {
-    var existingIncome = this.findExistingExpenseIfValidId(id);
-    if (existingIncome.getLoan() != null) {
+    var existingExpense = this.findExistingExpenseIfValidId(id);
+    if (existingExpense.getLoan() != null) {
       throw new RuntimeException();
     }
-    balanceService.updateBalanceForLoggedInUser(existingIncome.getAmount());
-    expenseRepository.delete(existingIncome);
+    balanceService.updateBalanceForLoggedInUser(existingExpense.getAmount());
+    expenseRepository.delete(existingExpense);
   }
 
   private Expense findExistingExpenseIfValidId(Integer id) {
