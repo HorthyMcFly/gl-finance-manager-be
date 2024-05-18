@@ -62,6 +62,14 @@ public class AssetService {
     return AssetService.toDto(modifiedAsset);
   }
 
+  @Transactional
+  public void liquidateAsset(Integer assetId) {
+    var existingAsset = this.findExistingAssetIfValidId(assetId);
+    var fullAmount = existingAsset.getAmount();
+    assetRepository.delete(existingAsset);
+    balanceService.updateInvestmentBalanceForLoggedInUser(fullAmount);
+  }
+
   private Asset findExistingAssetIfValidId(Integer id) {
     if (id == null) {
       throw new RuntimeException();

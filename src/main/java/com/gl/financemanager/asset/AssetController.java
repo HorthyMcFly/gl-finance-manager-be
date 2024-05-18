@@ -42,4 +42,11 @@ public class AssetController {
     return new ResponseEntity<>(assetService.decreaseAssetAmount(assetDto),
         HttpStatusCode.valueOf(200));
   }
+
+  @DeleteMapping("/{id}")
+  @ResponseBody
+  public ResponseEntity<Void> liquidateAsset(@PathVariable Integer id) {
+    assetService.liquidateAsset(id);
+    return new ResponseEntity<>(null, HttpStatusCode.valueOf(204));
+  }
 }
