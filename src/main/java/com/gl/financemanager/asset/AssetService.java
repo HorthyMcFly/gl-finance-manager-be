@@ -2,11 +2,14 @@ package com.gl.financemanager.asset;
 
 import com.gl.financemanager.auth.UserRepository;
 import com.gl.financemanager.balance.BalanceService;
+import com.gl.financemanager.income.IncomeDto;
+import com.gl.financemanager.income.IncomeService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -14,6 +17,7 @@ import java.util.List;
 public class AssetService {
 
   private BalanceService balanceService;
+  private IncomeService incomeService;
 
   private AssetRepository assetRepository;
   private AssetTypeRepository assetTypeRepository;
@@ -68,6 +72,20 @@ public class AssetService {
     var fullAmount = existingAsset.getAmount();
     assetRepository.delete(existingAsset);
     balanceService.updateInvestmentBalanceForLoggedInUser(fullAmount);
+  }
+
+  @Transactional
+  public void investmentBalanceToIncome(BigDecimal amount) {
+    var userBalance = balanceService.getBalanceForLoggedInUser();
+    if (amount.compareTo(userBalance.getInvestmentBalance()) > 0) {
+      throw new RuntimeException();
+    }
+    balanceService.updateInvestmentBalanceForLoggedInUser(amount.negate());
+    var incomeDto = IncomeDto.builder()
+        .amount(amount)
+        .source("Befektetési egyenleg")
+        .build();
+    incomeService.createIncome(incomeDto);
   }
 
   private Asset findExistingAssetIfValidId(Integer id) {

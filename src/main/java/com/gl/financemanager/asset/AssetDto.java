@@ -31,7 +31,7 @@ public class AssetDto {
   @Size(min = 1, max = 30)
   private String name;
 
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
   private Boolean useInvestmentBalance;
 
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
@@ -43,7 +43,7 @@ public class AssetDto {
 
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
   @NotNull
-  @DecimalMin(value = "0")
+  @DecimalMin(value = "0.01")
   @DecimalMax(value = "1000")
   private BigDecimal interestRate;
 

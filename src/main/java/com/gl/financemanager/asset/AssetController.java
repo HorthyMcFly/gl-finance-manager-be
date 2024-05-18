@@ -49,4 +49,12 @@ public class AssetController {
     assetService.liquidateAsset(id);
     return new ResponseEntity<>(null, HttpStatusCode.valueOf(204));
   }
+
+  @PostMapping("/investment-balance-to-income")
+  @ResponseBody
+  public ResponseEntity<Void> investmentBalanceToIncome(
+      @RequestBody @Valid AssetInvestmentBalanceDto assetInvestmentBalanceDto) {
+    assetService.investmentBalanceToIncome(assetInvestmentBalanceDto.getAmount());
+    return new ResponseEntity<>(null, HttpStatusCode.valueOf(204));
+  }
 }
