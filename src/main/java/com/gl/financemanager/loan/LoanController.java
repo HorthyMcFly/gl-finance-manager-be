@@ -1,10 +1,10 @@
 package com.gl.financemanager.loan;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,5 +19,26 @@ public class LoanController {
   @ResponseBody
   public List<LoanDto> getLoansForLoggedInUser() {
     return this.loanService.getLoansForLoggedInUser();
+  }
+
+  @PostMapping
+  @ResponseBody
+  public ResponseEntity<LoanDto> createLoan(@RequestBody @Valid LoanDto loanDto) {
+    return new ResponseEntity<>(loanService.createLoan(loanDto),
+        HttpStatusCode.valueOf(201));
+  }
+
+  @PutMapping
+  @ResponseBody
+  public ResponseEntity<LoanDto> modifyLoan(@RequestBody @Valid LoanDto loanDto) {
+    return new ResponseEntity<>(loanService.modifyLoan(loanDto),
+        HttpStatusCode.valueOf(200));
+  }
+
+  @DeleteMapping("/{id}")
+  @ResponseBody
+  public ResponseEntity<Void> deleteLoan(@PathVariable Integer id) {
+    this.loanService.deleteLoan(id);
+    return new ResponseEntity<>(null, HttpStatusCode.valueOf(204));
   }
 }

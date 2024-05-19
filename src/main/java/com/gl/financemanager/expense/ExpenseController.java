@@ -17,7 +17,7 @@ public class ExpenseController {
 
   @GetMapping("/own/periods/{periodId}")
   @ResponseBody
-  public ResponseEntity<List<ExpenseDto>> getIncomesByPeriodId(@PathVariable Integer periodId) {
+  public ResponseEntity<List<ExpenseDto>> getExpensesByPeriodId(@PathVariable Integer periodId) {
     return new ResponseEntity<>(
         this.expenseService.getExpensesForLoggedInUserByPeriodId(periodId),
         HttpStatusCode.valueOf(200));
@@ -31,21 +31,21 @@ public class ExpenseController {
 
   @PostMapping
   @ResponseBody
-  public ResponseEntity<ExpenseDto> createIncome(@RequestBody @Valid ExpenseDto expenseDto) {
+  public ResponseEntity<ExpenseDto> createExpense(@RequestBody @Valid ExpenseDto expenseDto) {
     return new ResponseEntity<>(expenseService.createExpense(expenseDto),
         HttpStatusCode.valueOf(201));
   }
 
   @PutMapping
   @ResponseBody
-  public ResponseEntity<ExpenseDto> modifyIncome(@RequestBody @Valid ExpenseDto expenseDto) {
+  public ResponseEntity<ExpenseDto> modifyExpense(@RequestBody @Valid ExpenseDto expenseDto) {
     return new ResponseEntity<>(expenseService.modifyExpense(expenseDto),
         HttpStatusCode.valueOf(200));
   }
 
   @DeleteMapping("/{id}")
   @ResponseBody
-  public ResponseEntity<Void> deleteIncome(@PathVariable Integer id) {
+  public ResponseEntity<Void> deleteExpense(@PathVariable Integer id) {
     this.expenseService.deleteExpense(id);
     return new ResponseEntity<>(null, HttpStatusCode.valueOf(204));
   }

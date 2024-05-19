@@ -1,5 +1,7 @@
 package com.gl.financemanager.expense;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gl.financemanager.loan.Loan;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -34,6 +36,9 @@ public class ExpenseDto {
   @Size(max = 100)
   private String comment;
 
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-  private boolean hasRelatedLoan;
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
+  private String relatedLoanName;
+
+  @JsonIgnore
+  private Loan loan;
 }

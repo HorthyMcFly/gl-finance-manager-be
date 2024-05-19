@@ -1,12 +1,13 @@
 package com.gl.financemanager.expense;
 import com.gl.financemanager.auth.UserRepository;
 import com.gl.financemanager.balance.BalanceService;
+import com.gl.financemanager.loan.Loan;
+import com.gl.financemanager.loan.LoanDto;
 import com.gl.financemanager.period.PeriodRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -44,6 +45,9 @@ public class ExpenseService {
       throw new RuntimeException();
     }
     newExpense.setFmUser(loggedInUser.get());
+    if (expenseDto.getLoan() != null) {
+      newExpense.setLoan(expenseDto.getLoan());
+    }
 
     var createdExpense = expenseRepository.save(newExpense);
     balanceService.updateBalanceForLoggedInUser(expenseDto.getAmount().negate());
@@ -97,6 +101,51 @@ public class ExpenseService {
     return existingExpense;
   }
 
+
+  @Transactional
+  public void createExpenseForLoan(Loan loan) {
+    var fixExpenseCategoryOpt = expenseCategoryRepository.findByCategory("Fix");
+    assert fixExpenseCategoryOpt.isPresent();
+    var newExpense = ExpenseDto.builder()
+        .amount(loan.getMonthlyRepayment())
+        .loan(loan)
+        .recipient("Hitel törlesztő")
+        .expenseCategory(fixExpenseCategoryOpt.get())
+        .build();
+    this.createExpense(newExpense);
+  }
+
+  @Transactional
+  public void modifyExpenseForLoan(LoanDto loanDto) {
+    var activePeriod = periodRepository.findByActive(true);
+    var existingExpense =
+        expenseRepository.findByLoanIdAndFmPeriodId(loanDto.getId(), activePeriod.getId());
+    if (existingExpense == null) {
+      throw new RuntimeException();
+    }
+    var monthlyRepaymentDifference =
+        existingExpense.getAmount().subtract(loanDto.getMonthlyRepayment());
+    existingExpense.setAmount(loanDto.getMonthlyRepayment());
+    expenseRepository.save(existingExpense);
+    balanceService.updateBalanceForLoggedInUser(monthlyRepaymentDifference);
+  }
+
+  @Transactional
+  public void deleteExpenseForLoan(Integer loanId) {
+    var activePeriod = periodRepository.findByActive(true);
+    var existingExpense =
+        expenseRepository.findByLoanIdAndFmPeriodId(loanId, activePeriod.getId());
+    balanceService.updateBalanceForLoggedInUser(existingExpense.getAmount());
+    expenseRepository.delete(existingExpense);
+
+    var loanExpenses = expenseRepository.findAllByLoanId(loanId);
+    loanExpenses.forEach(loanExpense -> {
+      loanExpense.setLoan(null);
+      loanExpense.setComment("Hitel törölve");
+    });
+    expenseRepository.saveAll(loanExpenses);
+  }
+
   static ExpenseDto toDto(Expense expense) {
     return ExpenseDto.builder()
         .id(expense.getId())
@@ -104,7 +153,7 @@ public class ExpenseService {
         .recipient(expense.getRecipient())
         .expenseCategory(expense.getExpenseCategory())
         .comment(expense.getComment())
-        .hasRelatedLoan(expense.getLoan() != null)
+        .relatedLoanName(expense.getLoan() != null ? expense.getLoan().getName() : null)
         .build();
   }
 
