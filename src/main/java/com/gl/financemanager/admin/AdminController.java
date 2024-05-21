@@ -44,4 +44,10 @@ public class AdminController {
     modifiedUser.setPassword("");
     return new ResponseEntity<>(modifiedUser, HttpStatusCode.valueOf(200));
   }
+
+  @PostMapping("/close-active-period")
+  public ResponseEntity<Void> closePeriod() {
+    adminService.closeActivePeriod();
+    return new ResponseEntity<>(null, HttpStatusCode.valueOf(200));
+  }
 }

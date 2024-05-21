@@ -23,4 +23,10 @@ public class PeriodController {
     return new ResponseEntity<>(periodService.getPeriods(),
         HttpStatusCode.valueOf(200));
   }
+
+  @GetMapping("/active")
+  @ResponseBody
+  ResponseEntity<FmPeriod> getActivePeriod() {
+    return new ResponseEntity<>(periodService.getActivePeriod(), HttpStatusCode.valueOf(200));
+  }
 }

@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface BalanceRepository extends JpaRepository<Balance, Integer> {
 
   Optional<Balance> findBalanceByFmUserUsername(String username);
+
+  Balance findByFmUserId(Integer id);
 }
