@@ -8,9 +8,9 @@ import lombok.Data;
 @AllArgsConstructor
 public class RegisterRequest {
 
-    @Schema(description = "User name", example = "username", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private String username;
 
-    @Schema(description = "Password", example = "password", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private String password;
 }
