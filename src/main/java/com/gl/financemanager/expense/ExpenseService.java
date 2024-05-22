@@ -48,10 +48,14 @@ public class ExpenseService {
     if (expenseDto.getLoan() != null) {
       newExpense.setLoan(expenseDto.getLoan());
     }
-    newExpense.setEditable(true);
+    var isInvestment = expenseDto.getExpenseCategory().getCategory().equals("INVESTMENT");
+    newExpense.setEditable(!isInvestment);
 
     var createdExpense = expenseRepository.save(newExpense);
     balanceService.updateBalanceForLoggedInUser(expenseDto.getAmount().negate());
+    if (isInvestment) {
+      balanceService.updateInvestmentBalanceForLoggedInUser(expenseDto.getAmount());
+    }
     return ExpenseService.toDto(createdExpense);
   }
 
