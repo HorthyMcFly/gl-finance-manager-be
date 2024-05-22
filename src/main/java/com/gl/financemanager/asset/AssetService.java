@@ -44,6 +44,11 @@ public class AssetService {
     if (loggedInUser.isEmpty()) {
       throw new RuntimeException();
     }
+    var userBalance = balanceService.getBalanceForLoggedInUser();
+    if (assetDto.getUseInvestmentBalance() &&
+        (assetDto.getAmount().compareTo(userBalance.getInvestmentBalance()) > 0)) {
+      throw new RuntimeException();
+    }
     newAsset.setFmUser(loggedInUser.get());
     var createdAsset = assetRepository.save(newAsset);
     if (assetDto.getUseInvestmentBalance()) {
