@@ -27,7 +27,7 @@ public class IncomeService {
   }
 
   @Transactional
-  public IncomeDto createIncome(IncomeDto incomeDto) {
+  public IncomeDto createIncome(IncomeDto incomeDto, boolean editable) {
     if (incomeDto.getId() != null) {
       throw new RuntimeException();
     }
@@ -40,6 +40,7 @@ public class IncomeService {
       throw new RuntimeException();
     }
     newIncome.setFmUser(loggedInUser.get());
+    newIncome.setEditable(editable);
 
     var createdIncome = incomeRepository.saveAndFlush(newIncome);
     balanceService.updateBalanceForLoggedInUser(incomeDto.getAmount());
@@ -47,8 +48,16 @@ public class IncomeService {
   }
 
   @Transactional
+  public IncomeDto createIncome(IncomeDto incomeDto) {
+    return createIncome(incomeDto, true);
+  }
+
+  @Transactional
   public IncomeDto modifyIncome(IncomeDto incomeDto) {
     var existingIncome = this.findExistingIncomeIfValidId(incomeDto.getId());
+    if (!existingIncome.isEditable()) {
+      throw new RuntimeException();
+    }
     var amountDifference = incomeDto.getAmount().subtract(existingIncome.getAmount());
 
     existingIncome.setAmount(incomeDto.getAmount());
@@ -64,6 +73,9 @@ public class IncomeService {
   @Transactional
   public void deleteIncome(Integer id) {
     var existingIncome = this.findExistingIncomeIfValidId(id);
+    if (!existingIncome.isEditable()) {
+      throw new RuntimeException();
+    }
     balanceService.updateBalanceForLoggedInUser(existingIncome.getAmount().negate());
     incomeRepository.delete(existingIncome);
   }
@@ -92,6 +104,7 @@ public class IncomeService {
         .amount(income.getAmount())
         .source(income.getSource())
         .comment(income.getComment())
+        .editable(income.isEditable())
         .build();
   }
 

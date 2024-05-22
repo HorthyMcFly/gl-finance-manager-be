@@ -90,7 +90,7 @@ public class AssetService {
         .amount(amount)
         .source("Befektetési egyenleg")
         .build();
-    incomeService.createIncome(incomeDto);
+    incomeService.createIncome(incomeDto, false);
   }
 
   private Asset findExistingAssetIfValidId(Integer id) {

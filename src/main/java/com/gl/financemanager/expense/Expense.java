@@ -44,4 +44,6 @@ public class Expense {
   private ExpenseCategory expenseCategory;
 
   private String comment;
+
+  private boolean editable;
 }

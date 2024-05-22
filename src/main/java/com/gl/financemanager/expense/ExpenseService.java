@@ -48,6 +48,7 @@ public class ExpenseService {
     if (expenseDto.getLoan() != null) {
       newExpense.setLoan(expenseDto.getLoan());
     }
+    newExpense.setEditable(true);
 
     var createdExpense = expenseRepository.save(newExpense);
     balanceService.updateBalanceForLoggedInUser(expenseDto.getAmount().negate());
@@ -57,7 +58,7 @@ public class ExpenseService {
   @Transactional
   public ExpenseDto modifyExpense(ExpenseDto expenseDto) {
     var existingExpense = this.findExistingExpenseIfValidId(expenseDto.getId());
-    if (existingExpense.getLoan() != null) {
+    if (existingExpense.getLoan() != null || !existingExpense.isEditable()) {
       throw new RuntimeException();
     }
     var amountDifference = expenseDto.getAmount().subtract(existingExpense.getAmount());
@@ -76,7 +77,7 @@ public class ExpenseService {
   @Transactional
   public void deleteExpense(Integer id) {
     var existingExpense = this.findExistingExpenseIfValidId(id);
-    if (existingExpense.getLoan() != null) {
+    if (existingExpense.getLoan() != null || !existingExpense.isEditable()) {
       throw new RuntimeException();
     }
     balanceService.updateBalanceForLoggedInUser(existingExpense.getAmount());
@@ -111,6 +112,7 @@ public class ExpenseService {
         .loan(loan)
         .recipient("Hitel törlesztő")
         .expenseCategory(fixExpenseCategoryOpt.get())
+        .editable(false)
         .build();
     this.createExpense(newExpense);
   }
@@ -153,6 +155,7 @@ public class ExpenseService {
         .recipient(expense.getRecipient())
         .expenseCategory(expense.getExpenseCategory())
         .comment(expense.getComment())
+        .editable(expense.isEditable())
         .relatedLoanName(expense.getLoan() != null ? expense.getLoan().getName() : null)
         .build();
   }

@@ -30,4 +30,7 @@ public class IncomeDto {
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
   @Size(max = 100)
   private String comment;
+
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+  private boolean editable;
 }

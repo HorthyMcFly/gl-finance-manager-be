@@ -75,6 +75,7 @@ public class AdminService {
                     .scaleByPowerOfTen(-2))
                 .source(interestPayingAsset.getName())
                 .comment("Kamat")
+                .editable(false)
                 .build())
             .toList();
         incomeRepository.saveAll(interestIncomes);
@@ -145,10 +146,11 @@ public class AdminService {
                     .fmUser(loan.getFmUser())
                     .fmPeriod(newPeriod)
                     .amount(expenseAmount)
-                    .recipient("Hiteltörlesztő")
+                    .recipient("Hitel törlesztő")
                     .loan(loan)
                     .expenseCategory(fixExpenseCategory)
                     .comment(loan.getName())
+                    .editable(false)
                     .build();
             })
             .toList();

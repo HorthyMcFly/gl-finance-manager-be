@@ -36,4 +36,6 @@ public class Income {
 
   private String comment;
 
+  private boolean editable;
+
 }

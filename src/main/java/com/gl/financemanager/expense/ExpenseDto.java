@@ -36,6 +36,9 @@ public class ExpenseDto {
   @Size(max = 100)
   private String comment;
 
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+  private boolean editable;
+
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
   private String relatedLoanName;
 
