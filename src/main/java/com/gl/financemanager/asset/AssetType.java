@@ -19,4 +19,7 @@ public class AssetType {
   private Integer id;
 
   private String type;
+
+  @Column(name = "DISPLAY_NAME")
+  private String displayName;
 }

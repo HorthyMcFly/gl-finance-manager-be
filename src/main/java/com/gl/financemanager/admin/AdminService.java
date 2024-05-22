@@ -87,7 +87,7 @@ public class AdminService {
         var userInvestmentBalanceIncrementMap = new HashMap<Integer, BigDecimal>();
         matureAssets.forEach(matureAsset -> {
             var userId = matureAsset.getFmUser().getId();
-            var incrementAmount = matureAsset.getAssetType().getType().equals("Kötvény") ?
+            var incrementAmount = matureAsset.getAssetType().getType().equals("BOND") ?
                 matureAsset.getAmount() :
                 matureAsset.getAmount().add(
                     matureAsset.getAmount()
@@ -122,7 +122,7 @@ public class AdminService {
         periodRepository.save(newPeriod);
 
         var allLoans = loanRepository.findAll();
-        var fixExpenseCategoryOpt = expenseCategoryRepository.findByCategory("Fix");
+        var fixExpenseCategoryOpt = expenseCategoryRepository.findByCategory("FIX");
         assert fixExpenseCategoryOpt.isPresent();
         var fixExpenseCategory = fixExpenseCategoryOpt.get();
         var newMonthlyRepaymentExpenses = allLoans.stream()

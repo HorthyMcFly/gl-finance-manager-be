@@ -19,4 +19,7 @@ public class ExpenseCategory {
   private Integer id;
 
   private String category;
+
+  @Column(name = "DISPLAY_NAME")
+  private String displayName;
 }
