@@ -4,8 +4,12 @@ import com.gl.financemanager.asset.AssetRepository;
 import com.gl.financemanager.auth.FmUser;
 import com.gl.financemanager.auth.UserRepository;
 import com.gl.financemanager.balance.BalanceRepository;
+import com.gl.financemanager.expense.Expense;
+import com.gl.financemanager.expense.ExpenseCategoryRepository;
+import com.gl.financemanager.expense.ExpenseRepository;
 import com.gl.financemanager.income.Income;
 import com.gl.financemanager.income.IncomeRepository;
+import com.gl.financemanager.loan.LoanRepository;
 import com.gl.financemanager.period.FmPeriod;
 import com.gl.financemanager.period.PeriodRepository;
 import jakarta.transaction.Transactional;
@@ -27,6 +31,9 @@ public class AdminService {
     private final AssetRepository assetRepository;
     private final IncomeRepository incomeRepository;
     private final BalanceRepository balanceRepository;
+    private final LoanRepository loanRepository;
+    private final ExpenseRepository expenseRepository;
+    private final ExpenseCategoryRepository expenseCategoryRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -102,7 +109,6 @@ public class AdminService {
 
         var newStartDate = activePeriod.getStartDate().plusMonths(1)
             .with(TemporalAdjusters.firstDayOfMonth());
-        System.out.println(newStartDate);
         var newPeriod = FmPeriod.builder()
             .active(true)
             .name(newStartDate.toString().substring(0, 7))
@@ -110,7 +116,57 @@ public class AdminService {
             .endDate(activePeriod.getEndDate().plusMonths(1)
                 .with(TemporalAdjusters.lastDayOfMonth()))
             .build();
+
+        // saved new active period required for loan operations
         activePeriod.setActive(false);
         periodRepository.save(newPeriod);
+
+        var allLoans = loanRepository.findAll();
+        var fixExpenseCategoryOpt = expenseCategoryRepository.findByCategory("Fix");
+        assert fixExpenseCategoryOpt.isPresent();
+        var fixExpenseCategory = fixExpenseCategoryOpt.get();
+        var newMonthlyRepaymentExpenses = allLoans.stream()
+            .map(loan -> {
+                BigDecimal expenseAmount;
+                // if loan is expired
+                if (loan.getMonthlyRepayment().compareTo(loan.getAmount()) >= 0) {
+                    expenseAmount = loan.getAmount();
+                    loan.setAmount(BigDecimal.ZERO);
+                } else {
+                    expenseAmount = loan.getMonthlyRepayment();
+                    var loanAmountAfterMonthlyRepayment = loan.getAmount().subtract(expenseAmount);
+                    loan.setAmount(loanAmountAfterMonthlyRepayment
+                        .add(loanAmountAfterMonthlyRepayment
+                            .multiply(loan.getInterestRate()).scaleByPowerOfTen(-2)
+                        )
+                    );
+                }
+                return Expense.builder()
+                    .fmUser(loan.getFmUser())
+                    .fmPeriod(newPeriod)
+                    .amount(expenseAmount)
+                    .recipient("Hiteltörlesztő")
+                    .loan(loan)
+                    .expenseCategory(fixExpenseCategory)
+                    .comment(loan.getName())
+                    .build();
+            })
+            .toList();
+
+        expenseRepository.saveAll(newMonthlyRepaymentExpenses);
+        newMonthlyRepaymentExpenses.forEach(newMonthlyRepaymentExpense -> {
+            var userBalance = balanceRepository
+                .findByFmUserId(newMonthlyRepaymentExpense.getFmUser().getId());
+            userBalance.setBalance(userBalance.getBalance()
+                .subtract(newMonthlyRepaymentExpense.getAmount()));
+        });
+        allLoans.forEach(loan -> {
+            if (loan.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+                loanRepository.delete(loan);
+            } else {
+                loanRepository.save(loan);
+            }
+        });
+
     }
 }
