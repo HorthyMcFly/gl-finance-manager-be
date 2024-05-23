@@ -44,12 +44,20 @@ public class AdminService {
 
     @Transactional
     public FmUser createUser(FmUser newUser) {
+        var usernameLength = newUser.getUsername().length();
+        if (usernameLength < 5 || usernameLength > 20) {
+            throw new RuntimeException();
+        }
         newUser.setPassword(passwordEncoder.encode(newUser.getUsername()));
         return userRespository.save(newUser);
     }
 
     @Transactional
     public FmUser modifyUser(FmUser modifiedUser) {
+        var usernameLength = modifiedUser.getUsername().length();
+        if (usernameLength < 5 || usernameLength > 20) {
+            throw new RuntimeException();
+        }
         if (modifiedUser.getPassword().equals("reset")) {
             modifiedUser.setPassword(passwordEncoder.encode(modifiedUser.getUsername()));
         } else {

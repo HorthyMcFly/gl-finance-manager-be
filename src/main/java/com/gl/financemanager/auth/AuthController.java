@@ -1,5 +1,6 @@
 package com.gl.financemanager.auth;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +23,14 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseBody
-    public ResponseEntity<Void> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<Void> register(@RequestBody @Valid  RegisterRequest registerRequest) {
         authService.register(registerRequest);
         return new ResponseEntity<>(HttpStatusCode.valueOf(200));
     }
 
     @PostMapping("/change-password")
     @ResponseBody
-    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+    public ResponseEntity<Void> changePassword(@RequestBody @Valid  ChangePasswordRequest changePasswordRequest) {
         authService.changePassword(changePasswordRequest);
         return new ResponseEntity<>(HttpStatusCode.valueOf(200));
     }
