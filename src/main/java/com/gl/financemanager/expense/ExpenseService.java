@@ -45,11 +45,12 @@ public class ExpenseService {
       throw new RuntimeException();
     }
     newExpense.setFmUser(loggedInUser.get());
-    if (expenseDto.getLoan() != null) {
+    var hasLoan = expenseDto.getLoan() != null;
+    if (hasLoan) {
       newExpense.setLoan(expenseDto.getLoan());
     }
     var isInvestment = expenseDto.getExpenseCategory().getCategory().equals("INVESTMENT");
-    newExpense.setEditable(!isInvestment);
+    newExpense.setEditable(!(isInvestment || hasLoan));
 
     var createdExpense = expenseRepository.save(newExpense);
     balanceService.updateBalanceForLoggedInUser(expenseDto.getAmount().negate());
