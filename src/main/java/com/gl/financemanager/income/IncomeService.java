@@ -42,7 +42,7 @@ public class IncomeService {
     newIncome.setFmUser(loggedInUser.get());
     newIncome.setEditable(editable);
 
-    var createdIncome = incomeRepository.saveAndFlush(newIncome);
+    var createdIncome = incomeRepository.save(newIncome);
     balanceService.updateBalanceForLoggedInUser(incomeDto.getAmount());
     return IncomeService.toDto(createdIncome);
   }
@@ -64,7 +64,7 @@ public class IncomeService {
     existingIncome.setSource(incomeDto.getSource());
     existingIncome.setComment(incomeDto.getComment());
 
-    var modifiedIncome = incomeRepository.saveAndFlush(existingIncome);
+    var modifiedIncome = incomeRepository.save(existingIncome);
     balanceService.updateBalanceForLoggedInUser(amountDifference);
 
     return IncomeService.toDto(modifiedIncome);

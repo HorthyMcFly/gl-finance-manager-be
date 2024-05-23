@@ -42,11 +42,13 @@ public class AdminService {
         return userRespository.findAll();
     }
 
+    @Transactional
     public FmUser createUser(FmUser newUser) {
         newUser.setPassword(passwordEncoder.encode(newUser.getUsername()));
-        return userRespository.saveAndFlush(newUser);
+        return userRespository.save(newUser);
     }
 
+    @Transactional
     public FmUser modifyUser(FmUser modifiedUser) {
         if (modifiedUser.getPassword().equals("reset")) {
             modifiedUser.setPassword(passwordEncoder.encode(modifiedUser.getUsername()));
@@ -54,7 +56,7 @@ public class AdminService {
           var existingUser = this.userRespository.findById(modifiedUser.getId());
           existingUser.ifPresent(fmUser -> modifiedUser.setPassword(fmUser.getPassword()));
         }
-        return userRespository.saveAndFlush(modifiedUser);
+        return userRespository.save(modifiedUser);
     }
 
     @Transactional
