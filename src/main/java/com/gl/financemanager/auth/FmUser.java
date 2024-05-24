@@ -28,7 +28,6 @@ public class FmUser {
     @Column(unique = true)
     private String username;
 
-    @NotNull
     private String password;
 
     private boolean admin;
