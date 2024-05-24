@@ -174,6 +174,12 @@ public class AdminService {
         });
         allLoans.forEach(loan -> {
             if (loan.getAmount().compareTo(BigDecimal.ZERO) == 0) {
+                var loanExpenses = expenseRepository.findAllByLoanId(loan.getId());
+                loanExpenses.forEach(loanExpense -> {
+                    loanExpense.setLoan(null);
+                    loanExpense.setComment("Hitel visszafizetve");
+                });
+                expenseRepository.saveAll(loanExpenses);
                 loanRepository.delete(loan);
             } else {
                 loanRepository.save(loan);
