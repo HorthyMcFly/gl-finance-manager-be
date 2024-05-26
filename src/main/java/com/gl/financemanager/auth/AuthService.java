@@ -44,13 +44,17 @@ public class AuthService {
   }
 
   @Transactional
-  public void register(RegisterRequest registerRequest) {
+  public void register(RegisterRequest registerRequest) throws Exception{
+    var existingUser = userRepository.findByUsername(registerRequest.getUsername());
+    if (existingUser.isPresent()) {
+      throw new Exception("Username already exists.");
+    }
     var userToSave = FmUser.builder()
         .username(registerRequest.getUsername())
         .password(passwordEncoder.encode(registerRequest.getPassword()))
         .active(true)
         .build();
-    this.userRepository.save(userToSave);
+    userRepository.save(userToSave);
   }
 
   @Transactional

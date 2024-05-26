@@ -24,7 +24,11 @@ public class AuthController {
     @PostMapping("/register")
     @ResponseBody
     public ResponseEntity<Void> register(@RequestBody @Valid  RegisterRequest registerRequest) {
-        authService.register(registerRequest);
+        try {
+            authService.register(registerRequest);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatusCode.valueOf(409));
+        }
         return new ResponseEntity<>(HttpStatusCode.valueOf(200));
     }
 
