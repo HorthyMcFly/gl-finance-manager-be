@@ -1,8 +1,8 @@
 package com.gl.financemanager.admin;
 
-import com.gl.financemanager.auth.FmUser;
 import com.gl.financemanager.auth.Roles;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -20,28 +20,21 @@ public class AdminController {
 
   @GetMapping("/users")
   @ResponseBody
-  public ResponseEntity<List<FmUser>> getUsers() {
-    var usersWithoutPassword = this.adminService.getUsers().stream().peek(
-        fmUser -> fmUser.setPassword("")
-    ).toList();
-    return new ResponseEntity<>(usersWithoutPassword,
+  public ResponseEntity<List<FmUserDto>> getUsers() {
+    return new ResponseEntity<>(this.adminService.getUsers(),
         HttpStatusCode.valueOf(200));
   }
 
   @PostMapping("/user")
   @ResponseBody
-  public ResponseEntity<FmUser> createUser(@RequestBody FmUser user) {
-    var createdUser = this.adminService.createUser(user);
-    createdUser.setPassword("");
-    return new ResponseEntity<>(createdUser, HttpStatusCode.valueOf(201));
+  public ResponseEntity<FmUserDto> createUser(@RequestBody @Valid FmUserDto fmUserDto) {
+    return new ResponseEntity<>(this.adminService.createUser(fmUserDto), HttpStatusCode.valueOf(201));
   }
 
   @PutMapping("/user")
   @ResponseBody
-  public ResponseEntity<FmUser> modifyUser(@RequestBody FmUser user) {
-    var modifiedUser = this.adminService.modifyUser(user);
-    modifiedUser.setPassword("");
-    return new ResponseEntity<>(modifiedUser, HttpStatusCode.valueOf(200));
+  public ResponseEntity<FmUserDto> modifyUser(@RequestBody FmUserDto fmUserDto) {
+    return new ResponseEntity<>(this.adminService.modifyUser(fmUserDto), HttpStatusCode.valueOf(200));
   }
 
   @PostMapping("/close-active-period")

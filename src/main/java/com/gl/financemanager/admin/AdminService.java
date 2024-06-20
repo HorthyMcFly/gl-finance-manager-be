@@ -38,33 +38,31 @@ public class AdminService {
     private final PasswordEncoder passwordEncoder;
 
 
-    public List<FmUser> getUsers() {
-        return userRespository.findAll();
+    public List<FmUserDto> getUsers() {
+        return userRespository.findAll().stream().map(AdminService::fmUserToDto).toList();
     }
 
     @Transactional
-    public FmUser createUser(FmUser newUser) {
-        var usernameLength = newUser.getUsername().length();
-        if (usernameLength < 5 || usernameLength > 20) {
+    public FmUserDto createUser(FmUserDto fmUserDto) {
+        if (fmUserDto.getId() != null) {
             throw new RuntimeException();
         }
+        var newUser = AdminService.fmUserFromDto(fmUserDto);
         newUser.setPassword(passwordEncoder.encode(newUser.getUsername()));
-        return userRespository.save(newUser);
+        return AdminService.fmUserToDto(userRespository.save(newUser));
     }
 
     @Transactional
-    public FmUser modifyUser(FmUser modifiedUser) {
-        var usernameLength = modifiedUser.getUsername().length();
-        if (usernameLength < 5 || usernameLength > 20) {
-            throw new RuntimeException();
+    public FmUserDto modifyUser(FmUserDto fmUserDto) {
+        var existingUserOpt = this.userRespository.findById(fmUserDto.getId());
+        assert existingUserOpt.isPresent();
+        var existingUser = existingUserOpt.get();
+        if (fmUserDto.isResetPassword()) {
+            existingUser.setPassword(passwordEncoder.encode(existingUser.getUsername()));
         }
-        if (modifiedUser.getPassword().equals("reset")) {
-            modifiedUser.setPassword(passwordEncoder.encode(modifiedUser.getUsername()));
-        } else {
-          var existingUser = this.userRespository.findById(modifiedUser.getId());
-          existingUser.ifPresent(fmUser -> modifiedUser.setPassword(fmUser.getPassword()));
-        }
-        return userRespository.save(modifiedUser);
+        existingUser.setAdmin(fmUserDto.isAdmin());
+        existingUser.setActive(fmUserDto.isActive());
+        return AdminService.fmUserToDto(userRespository.save(existingUser));
     }
 
     @Transactional
@@ -186,5 +184,23 @@ public class AdminService {
             }
         });
 
+    }
+
+    static FmUserDto fmUserToDto(FmUser fmUser) {
+        return FmUserDto.builder()
+            .id(fmUser.getId())
+            .username(fmUser.getUsername())
+            .admin(fmUser.isAdmin())
+            .active(fmUser.isActive())
+            .build();
+    }
+
+    static FmUser fmUserFromDto(FmUserDto fmUserDto) {
+        return FmUser.builder()
+            .id(fmUserDto.getId())
+            .username(fmUserDto.getUsername())
+            .admin(fmUserDto.isAdmin())
+            .active(fmUserDto.isActive())
+            .build();
     }
 }
