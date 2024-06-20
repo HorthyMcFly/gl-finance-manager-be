@@ -15,7 +15,7 @@ public class DashboardController {
     @GetMapping
     @ResponseBody
     public ResponseEntity<DashboardData> getDashboardData() {
-        var dashboardData = dashboardService.getDashboardDataForLoggedInUser();
-        return new ResponseEntity<>(dashboardData, HttpStatusCode.valueOf(200));
+        return new ResponseEntity<>(dashboardService.getDashboardDataForLoggedInUser(),
+            HttpStatusCode.valueOf(200));
     }
 }

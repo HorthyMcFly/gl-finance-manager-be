@@ -25,6 +25,9 @@ public class DashboardService {
   public DashboardData getDashboardDataForLoggedInUser() {
     var balance = balanceService.getBalanceForLoggedInUser();
     var activePeriod = periodService.getActivePeriod();
+    if (activePeriod == null) {
+      return null;
+    }
 
     var totalIncome = incomeService.getIncomesForLoggedInUserByPeriodId(activePeriod.getId())
         .stream()
