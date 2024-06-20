@@ -37,9 +37,15 @@ public class AdminController {
     return new ResponseEntity<>(this.adminService.modifyUser(fmUserDto), HttpStatusCode.valueOf(200));
   }
 
+  @PostMapping("/create-first-period")
+  public ResponseEntity<Void> createFirstPeriod() {
+    adminService.createFirstPeriod();
+    return new ResponseEntity<>(HttpStatusCode.valueOf(201));
+  }
+
   @PostMapping("/close-active-period")
   public ResponseEntity<Void> closePeriod() {
     adminService.closeActivePeriod();
-    return new ResponseEntity<>(null, HttpStatusCode.valueOf(200));
+    return new ResponseEntity<>(HttpStatusCode.valueOf(200));
   }
 }

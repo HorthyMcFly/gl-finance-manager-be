@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +65,22 @@ public class AdminService {
         existingUser.setAdmin(fmUserDto.isAdmin());
         existingUser.setActive(fmUserDto.isActive());
         return AdminService.fmUserToDto(userRespository.save(existingUser));
+    }
+
+    @Transactional
+    public void createFirstPeriod() {
+        var existingPeriods = periodRepository.findAll();
+        if (!existingPeriods.isEmpty()) {
+            throw new RuntimeException();
+        }
+        var currentDate = LocalDate.now();
+        var firstPeriod = FmPeriod.builder()
+            .name(currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM")))
+            .startDate(currentDate.with(TemporalAdjusters.firstDayOfMonth()))
+            .endDate(currentDate.with(TemporalAdjusters.lastDayOfMonth()))
+            .active(true)
+            .build();
+        periodRepository.save(firstPeriod);
     }
 
     @Transactional
