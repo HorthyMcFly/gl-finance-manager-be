@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<FmUser, Integer> {
 
     Optional<FmUser> findByUsername(String username);
+
+    FmUser findTopByOrderById();
 }

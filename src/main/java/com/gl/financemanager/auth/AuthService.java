@@ -49,10 +49,15 @@ public class AuthService {
     if (existingUser.isPresent()) {
       throw new Exception("Username already exists.");
     }
+    // check if table is empty
+    // if it's empty, the first registered user is made admin
+    var isFirstUser = userRepository.findTopByOrderById() == null;
+
     var userToSave = FmUser.builder()
         .username(registerRequest.getUsername())
         .password(passwordEncoder.encode(registerRequest.getPassword()))
         .active(true)
+        .admin(isFirstUser)
         .build();
     userRepository.save(userToSave);
   }

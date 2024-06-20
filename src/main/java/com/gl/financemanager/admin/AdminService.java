@@ -14,6 +14,7 @@ import com.gl.financemanager.period.FmPeriod;
 import com.gl.financemanager.period.PeriodRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +58,15 @@ public class AdminService {
     @Transactional
     public FmUserDto modifyUser(FmUserDto fmUserDto) {
         var existingUserOpt = this.userRespository.findById(fmUserDto.getId());
+        var loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         assert existingUserOpt.isPresent();
         var existingUser = existingUserOpt.get();
+
+        // admins can't modify themselves
+        if (loggedInUsername.equals(existingUser.getUsername())) {
+            throw new RuntimeException();
+        }
+
         if (fmUserDto.isResetPassword()) {
             existingUser.setPassword(passwordEncoder.encode(existingUser.getUsername()));
         }
