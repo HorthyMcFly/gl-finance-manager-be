@@ -1,4 +1,4 @@
-package com.gl.financemanager.expense;
+package com.gl.financemanager.expense.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

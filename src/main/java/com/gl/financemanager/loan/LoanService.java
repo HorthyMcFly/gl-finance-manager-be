@@ -1,7 +1,7 @@
 package com.gl.financemanager.loan;
 
 import com.gl.financemanager.auth.UserRepository;
-import com.gl.financemanager.expense.ExpenseService;
+import com.gl.financemanager.expense.service.ExpenseService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;

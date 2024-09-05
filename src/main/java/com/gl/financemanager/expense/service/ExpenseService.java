@@ -1,6 +1,10 @@
-package com.gl.financemanager.expense;
+package com.gl.financemanager.expense.service;
 import com.gl.financemanager.auth.UserRepository;
 import com.gl.financemanager.balance.BalanceService;
+import com.gl.financemanager.expense.dto.ExpenseDto;
+import com.gl.financemanager.expense.entity.Expense;
+import com.gl.financemanager.expense.repository.ExpenseCategoryRepository;
+import com.gl.financemanager.expense.repository.ExpenseRepository;
 import com.gl.financemanager.loan.Loan;
 import com.gl.financemanager.loan.LoanDto;
 import com.gl.financemanager.period.PeriodRepository;
@@ -25,10 +29,6 @@ public class ExpenseService {
     var loggedInUsername = SecurityContextHolder.getContext().getAuthentication().getName();
     return expenseRepository.findByFmUserUsernameAndFmPeriodId(loggedInUsername, periodId)
         .stream().map(ExpenseService::toDto).toList();
-  }
-
-  public List<ExpenseCategory> getExpenseCategories() {
-    return this.expenseCategoryRepository.findAll();
   }
 
   @Transactional

@@ -1,4 +1,4 @@
-package com.gl.financemanager.expense;
+package com.gl.financemanager.expense.entity;
 
 import com.gl.financemanager.auth.FmUser;
 import com.gl.financemanager.loan.Loan;

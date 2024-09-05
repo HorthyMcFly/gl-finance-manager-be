@@ -1,5 +1,7 @@
-package com.gl.financemanager.expense;
+package com.gl.financemanager.expense.controller;
 
+import com.gl.financemanager.expense.service.ExpenseService;
+import com.gl.financemanager.expense.dto.ExpenseDto;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatusCode;
@@ -21,12 +23,6 @@ public class ExpenseController {
     return new ResponseEntity<>(
         this.expenseService.getExpensesForLoggedInUserByPeriodId(periodId),
         HttpStatusCode.valueOf(200));
-  }
-
-  @GetMapping("/expense-categories")
-  @ResponseBody
-  public List<ExpenseCategory> getExpenseCategories() {
-    return this.expenseService.getExpenseCategories();
   }
 
   @PostMapping

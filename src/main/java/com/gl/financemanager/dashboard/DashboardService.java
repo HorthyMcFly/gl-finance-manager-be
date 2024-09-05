@@ -2,7 +2,7 @@ package com.gl.financemanager.dashboard;
 
 import com.gl.financemanager.asset.AssetService;
 import com.gl.financemanager.balance.BalanceService;
-import com.gl.financemanager.expense.ExpenseService;
+import com.gl.financemanager.expense.service.ExpenseService;
 import com.gl.financemanager.income.IncomeService;
 import com.gl.financemanager.loan.LoanService;
 import com.gl.financemanager.period.PeriodService;

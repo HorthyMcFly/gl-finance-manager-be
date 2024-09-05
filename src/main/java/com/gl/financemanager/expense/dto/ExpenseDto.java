@@ -1,6 +1,7 @@
-package com.gl.financemanager.expense;
+package com.gl.financemanager.expense.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gl.financemanager.expense.entity.ExpenseCategory;
 import com.gl.financemanager.loan.Loan;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
