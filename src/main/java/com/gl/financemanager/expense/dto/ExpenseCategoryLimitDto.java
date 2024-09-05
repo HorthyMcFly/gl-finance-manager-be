@@ -24,5 +24,5 @@ public class ExpenseCategoryLimitDto {
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
   @DecimalMin(value = "1")
   @DecimalMax(value = "1e17")
-  private BigDecimal limit;
+  private BigDecimal expenseLimit;
 }

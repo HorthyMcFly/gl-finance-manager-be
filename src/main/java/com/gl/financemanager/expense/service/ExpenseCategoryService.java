@@ -32,7 +32,7 @@ public class ExpenseCategoryService {
     return ExpenseCategoryLimitDto.builder()
         .id(expenseCategoryLimit.getId())
         .expenseCategory(expenseCategoryLimit.getExpenseCategory())
-        .limit(expenseCategoryLimit.getExpenseLimit())
+        .expenseLimit(expenseCategoryLimit.getExpenseLimit())
         .build();
   }
 }
