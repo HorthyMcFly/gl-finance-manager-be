@@ -2,8 +2,6 @@ package com.gl.financemanager.expense.service;
 
 import com.gl.financemanager.auth.UserRepository;
 import com.gl.financemanager.expense.dto.ExpenseCategoryLimitDto;
-import com.gl.financemanager.expense.dto.ExpenseDto;
-import com.gl.financemanager.expense.entity.Expense;
 import com.gl.financemanager.expense.entity.ExpenseCategory;
 import com.gl.financemanager.expense.entity.ExpenseCategoryLimit;
 import com.gl.financemanager.expense.repository.ExpenseCategoryLimitRepository;
