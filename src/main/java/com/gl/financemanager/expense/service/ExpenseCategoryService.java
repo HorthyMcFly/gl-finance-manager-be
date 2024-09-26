@@ -33,7 +33,7 @@ public class ExpenseCategoryService {
 
   @Transactional
   public ExpenseCategoryLimitDto createExpenseCategoryLimit(ExpenseCategoryLimitDto expenseCategoryLimitDto) {
-    if (expenseCategoryLimitDto.getId() != null) {
+    if (expenseCategoryLimitDto.getId() != null || expenseCategoryLimitDto.getExpenseLimit() == null) {
       throw new RuntimeException();
     }
     var loggedInUser = this.userRepository
@@ -59,6 +59,9 @@ public class ExpenseCategoryService {
 
   @Transactional
   public ExpenseCategoryLimitDto modifyExpenseCategoryLimit(ExpenseCategoryLimitDto expenseCategoryLimitDto) {
+    if (expenseCategoryLimitDto.getExpenseLimit() == null) {
+      throw new RuntimeException();
+    }
     var existingExpenseCategoryLimit = findExistingExpenseCategoryLimitIfValidId(expenseCategoryLimitDto.getId());
     existingExpenseCategoryLimit.setExpenseLimit(expenseCategoryLimitDto.getExpenseLimit());
 

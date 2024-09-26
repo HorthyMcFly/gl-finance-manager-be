@@ -21,7 +21,7 @@ public class ExpenseCategoryLimitDto {
   @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
   private ExpenseCategory expenseCategory;
 
-  @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(requiredMode = Schema.RequiredMode.REQUIRED, nullable = true)
   @DecimalMin(value = "1")
   @DecimalMax(value = "1e17")
   private BigDecimal expenseLimit;
