@@ -17,8 +17,8 @@ public class LoanController {
 
   @GetMapping
   @ResponseBody
-  public List<LoanDto> getLoansForLoggedInUser() {
-    return this.loanService.getLoansForLoggedInUser();
+  public ResponseEntity<List<LoanDto>> getLoansForLoggedInUser() {
+    return new ResponseEntity<>(this.loanService.getLoansForLoggedInUser(), HttpStatusCode.valueOf((200)));
   }
 
   @PostMapping

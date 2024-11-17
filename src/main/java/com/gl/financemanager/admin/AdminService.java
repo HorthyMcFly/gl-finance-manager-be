@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
@@ -48,6 +49,10 @@ public class AdminService {
     @Transactional
     public FmUserDto createUser(FmUserDto fmUserDto) {
         if (fmUserDto.getId() != null) {
+            throw new RuntimeException();
+        }
+        var existingUser = userRespository.findByUsername(fmUserDto.getUsername());
+        if (existingUser.isPresent()) {
             throw new RuntimeException();
         }
         var newUser = AdminService.fmUserFromDto(fmUserDto);
@@ -172,7 +177,8 @@ public class AdminService {
                     var loanAmountAfterMonthlyRepayment = loan.getAmount().subtract(expenseAmount);
                     loan.setAmount(loanAmountAfterMonthlyRepayment
                         .add(loanAmountAfterMonthlyRepayment
-                            .multiply(loan.getInterestRate()).scaleByPowerOfTen(-2)
+                            .multiply(loan.getInterestRate().divide(new BigDecimal(12), RoundingMode.UP)
+                                .scaleByPowerOfTen(-2))
                         )
                     );
                 }

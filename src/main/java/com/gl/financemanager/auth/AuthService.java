@@ -24,7 +24,7 @@ public class AuthService {
 
   public LoginResponse login(Authentication authentication) {
     Instant now = Instant.now();
-    long expiry = 36000L;
+    long expiry = 18000L;
     String scope = authentication.getAuthorities().stream()
         .map(GrantedAuthority::getAuthority)
         .collect(Collectors.joining(","));
