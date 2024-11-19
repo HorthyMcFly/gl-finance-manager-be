@@ -17,4 +17,4 @@ docker save -o gl-finance-manager-be.tar gl-finance-manager-be
 docker load -i gl-finance-manager-be.tar
 
 ## Docker run
-docker run -e -p8080:8080 -p9090:9090 gl-finance-manager-be
+docker run -d -p8080:8080 -p9090:9090 gl-finance-manager-be
