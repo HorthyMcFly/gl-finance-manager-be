@@ -72,6 +72,14 @@ public class AdminService {
             throw new RuntimeException();
         }
 
+        // can't modify name to existing
+        var newUsernameExistingUserOpt = userRespository.findByUsername(fmUserDto.getUsername());
+        if (newUsernameExistingUserOpt.isPresent() &&
+            !newUsernameExistingUserOpt.get().getUsername().equals(existingUser.getUsername())) {
+            throw new RuntimeException();
+        }
+        existingUser.setUsername(fmUserDto.getUsername());
+
         if (fmUserDto.isResetPassword()) {
             existingUser.setPassword(passwordEncoder.encode(existingUser.getUsername()));
         }
